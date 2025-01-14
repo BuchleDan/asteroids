@@ -39,7 +39,8 @@ def main():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                print("Good Bye!")
+                sys.exit()
             
         for obj in updateable:
             obj.update(dt)
@@ -50,10 +51,11 @@ def main():
         
         for asteroid in asteroids:
             if asteroid.is_colliding(player):
-                if player.lives < 0:
+                if player.lives <= 0:
                     print("Game Over!")
                     sys.exit()
-                player.lose_life()                    
+                asteroid.kill()
+                player.lose_life()                
         
         for asteroid in asteroids:
             for shot in shots:

@@ -1,7 +1,9 @@
 import pygame
+import time
 from constants import *
 from circleshape import CircleShape
 from shot import Shot
+
 
 class Player(CircleShape):
     def __init__(self, x, y, lives):
@@ -11,6 +13,7 @@ class Player(CircleShape):
         self.lives = lives
         self.invicibility = 0
         self.color = "white"
+        self.frame_count = 0
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -24,10 +27,18 @@ class Player(CircleShape):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, self.color, self.triangle(), 2)
+        draw_player = True
+        if self.invicibility > 1:
+            self.frame_count += 1
+            draw_player = self.frame_count % 3 == 0
+        if draw_player:
+            pygame.draw.polygon(screen, self.color, self.triangle(), 2)
 
     def update(self, dt):
+        
         self.cooldown -= dt
+        if self.invicibility > 0:
+            self.color = "red"
         self.invicibility -= dt
         if self.invicibility <= 0:
             self.color = "white"
@@ -45,7 +56,6 @@ class Player(CircleShape):
     
     def lose_life(self):
         if self.invicibility > 0:
-            self.color = "red"
             return
         self.invicibility = PLAYER_INVINCIBILITY
         self.lives -= 1
